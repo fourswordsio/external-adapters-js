@@ -52,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - `blockchair`
   - `cryptoapis`
 - dxFeed now uses OTC feeds for FTSE and N225, rather than licensed data feeds
+- `synth-index` adapter is now a composite adapter.
 
 ### Removed
 
