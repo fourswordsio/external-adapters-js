@@ -35,11 +35,6 @@ export const marketCapTotalValue = (
     .toNumber()
 }
 
-const inputParams = {
-  allocations: true,
-  quote: false,
-}
-
 const toValidAllocations = (allocations: TokenAllocations): TokenAllocations => {
   if (!allocations.every((t) => !!t.symbol))
     throw new AdapterError({ message: `Symbol not available for all tokens.`, statusCode: 400 })
@@ -91,12 +86,18 @@ const computeMarketCap = async (config: Config, allocations: TokenAllocations, q
   return { payload, result }
 }
 
+const inputParams = {
+  allocations: true,
+  quote: false,
+  method: false,
+}
+
 export const execute = async (input: AdapterRequest, config: Config): Promise<AdapterResponse> => {
   const validator = new Validator(input, inputParams)
   if (validator.error) throw validator.error
 
   const jobRunID = validator.validated.id
-  const { quote = config.defaultQuote } = validator.validated.data
+  const { quote = config.defaultQuote, method = config.defaultMethod } = validator.validated.data
   const allocations = toValidAllocations(validator.validated.data.allocations)
 
   const _success = (payload: ResponsePayload, result: number) =>
@@ -106,7 +107,6 @@ export const execute = async (input: AdapterRequest, config: Config): Promise<Ad
       result,
     })
 
-  const { method = config.defaultMethod } = validator.validated.data
   switch (method) {
     case 'price':
       // eslint-disable-next-line no-case-declarations
